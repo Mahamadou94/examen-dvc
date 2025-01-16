@@ -1,0 +1,106 @@
+schema: '2.0'
+stages:
+  split:
+    cmd: python3 /home/ubuntu/Data_scientest/examen-dvc/src/load_and_split_data.py
+    deps:
+    - path: data/raw_data/raw.csv
+      hash: md5
+      md5: 617b56af2992376d5c3e91ad80823898
+      size: 333757
+    outs:
+    - path: data/processed_data/X_test.csv
+      hash: md5
+      md5: b6c2910e3b3fc562c5b516b63fc3e22c
+      size: 59909
+    - path: data/processed_data/X_train.csv
+      hash: md5
+      md5: ef01f67c035349e375300528a99938f5
+      size: 238533
+    - path: data/processed_data/y_test.csv
+      hash: md5
+      md5: a051d29629c8bbb4cfb7e85c7f0315da
+      size: 6456
+    - path: data/processed_data/y_train.csv
+      hash: md5
+      md5: a9cd9d91da89f732843d72548f64ded3
+      size: 25951
+  normalize:
+    cmd: python3 /home/ubuntu/Data_scientest/examen-dvc/src/normalisation.py
+    deps:
+    - path: data/processed_data/X_test.csv
+      hash: md5
+      md5: b6c2910e3b3fc562c5b516b63fc3e22c
+      size: 59909
+    - path: data/processed_data/X_train.csv
+      hash: md5
+      md5: ef01f67c035349e375300528a99938f5
+      size: 238533
+    outs:
+    - path: data/processed_data/X_test_scaled.csv
+      hash: md5
+      md5: 5da7e4a4fdff7df0d52ce6999aba6ae4
+      size: 76192
+    - path: data/processed_data/X_train_scaled.csv
+      hash: md5
+      md5: eaa7a77a42bf34e70379c4e223dfa812
+      size: 302527
+  grid_search:
+    cmd: python3 /home/ubuntu/Data_scientest/examen-dvc/src/grid_search_param.py
+    deps:
+    - path: data/processed_data/X_train_scaled.csv
+      hash: md5
+      md5: eaa7a77a42bf34e70379c4e223dfa812
+      size: 302527
+    - path: data/processed_data/y_train.csv
+      hash: md5
+      md5: a9cd9d91da89f732843d72548f64ded3
+      size: 25951
+    outs:
+    - path: models/best_params.pkl
+      hash: md5
+      md5: 0fb4ff926c40afac4cb093ae33448085
+      size: 90
+  train:
+    cmd: python3 /home/ubuntu/Data_scientest/examen-dvc/src/train.py
+    deps:
+    - path: data/processed_data/X_train_scaled.csv
+      hash: md5
+      md5: eaa7a77a42bf34e70379c4e223dfa812
+      size: 302527
+    - path: data/processed_data/y_train.csv
+      hash: md5
+      md5: a9cd9d91da89f732843d72548f64ded3
+      size: 25951
+    - path: models/best_params.pkl
+      hash: md5
+      md5: 0fb4ff926c40afac4cb093ae33448085
+      size: 90
+    outs:
+    - path: models/trained_model.pkl
+      hash: md5
+      md5: 2fa410e85f9eabd9070370ea0704d5a7
+      size: 25931329
+  evaluate:
+    cmd: python3 /home/ubuntu/Data_scientest/examen-dvc/src/evaluation.py
+    deps:
+    - path: data/processed_data/X_test_scaled.csv
+      hash: md5
+      md5: 5da7e4a4fdff7df0d52ce6999aba6ae4
+      size: 76192
+    - path: data/processed_data/y_test.csv
+      hash: md5
+      md5: a051d29629c8bbb4cfb7e85c7f0315da
+      size: 6456
+    - path: models/trained_model.pkl
+      hash: md5
+      md5: 2fa410e85f9eabd9070370ea0704d5a7
+      size: 25931329
+    outs:
+    - path: metrics/scores.json
+      hash: md5
+      md5: 5ed44c59bb114ac7d1cdaeed406ce4f0
+      size: 53
+    - path: src/data/prediction.csv
+      hash: md5
+      md5: ba97193eacea1e7e22edf90d56e49d37
+      size: 13224
