@@ -10,7 +10,7 @@ stages:
       - data/processed_data/y_test.csv
 
   normalize:
-    cmd: python3 src/normalisation.py
+    cmd: python3 src/data/normalisation.py
     deps:
       - data/processed_data/X_train.csv
       - data/processed_data/X_test.csv
@@ -19,7 +19,7 @@ stages:
       - data/processed_data/X_test_scaled.csv
 
   grid_search:
-    cmd: python3 src/grid_search_param.py
+    cmd: python3 src/data/grid_search_param.py
     deps:
       - data/processed_data/X_train_scaled.csv
       - data/processed_data/y_train.csv
@@ -27,7 +27,7 @@ stages:
       - models/best_params.pkl
 
   train:
-    cmd: python3 src/train.py
+    cmd: python3 src/models/train.py
     deps:
       - data/processed_data/X_train_scaled.csv
       - data/processed_data/y_train.csv
@@ -36,7 +36,7 @@ stages:
       - models/trained_model.pkl
 
   evaluate:
-    cmd: python3 src/evaluation.py
+    cmd: python3 src/models/evaluation.py
     deps:
       - data/processed_data/X_test_scaled.csv
       - data/processed_data/y_test.csv
