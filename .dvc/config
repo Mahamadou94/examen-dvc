@@ -1,7 +1,7 @@
 [core]
     remote = storage
 ['remote "storage"']
-    url = https://dagshub.com/Mahamadou94/my-first-repo
+    url = https://dagshub.com/Mahamadou94/my-first-repo.dvc
     auth = basic
     user = Mahamadou94
     password = 9e977a1178a56d0f9b687ee13eb06a5d4eece330
