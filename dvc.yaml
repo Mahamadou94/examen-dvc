@@ -1,46 +1,49 @@
 stages:
   split:
-    cmd: python3 /home/ubuntu/Data_scientest/examen-dvc/src/load_and_split_data.py
+    cmd: python3 src/load_and_split_data.py
     deps:
-      - /home/ubuntu/Data_scientest/examen-dvc/data/raw_data/raw.csv
+      - data/raw_data/raw.csv
     outs:
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/X_train.csv
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/X_test.csv
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/y_train.csv
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/y_test.csv
+      - data/processed_data/X_train.csv
+      - data/processed_data/X_test.csv
+      - data/processed_data/y_train.csv
+      - data/processed_data/y_test.csv
 
   normalize:
-    cmd: python3 /home/ubuntu/Data_scientest/examen-dvc/src/normalisation.py
+    cmd: python3 src/normalisation.py
     deps:
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/X_train.csv
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/X_test.csv
+      - data/processed_data/X_train.csv
+      - data/processed_data/X_test.csv
     outs:
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/X_train_scaled.csv
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/X_test_scaled.csv
+      - data/processed_data/X_train_scaled.csv
+      - data/processed_data/X_test_scaled.csv
 
   grid_search:
-    cmd: python3 /home/ubuntu/Data_scientest/examen-dvc/src/grid_search_param.py
+    cmd: python3 src/grid_search_param.py
     deps:
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/X_train_scaled.csv
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/y_train.csv
+      - data/processed_data/X_train_scaled.csv
+      - data/processed_data/y_train.csv
     outs:
-      - /home/ubuntu/Data_scientest/examen-dvc/models/best_params.pkl
+      - models/best_params.pkl
 
   train:
-    cmd: python3 /home/ubuntu/Data_scientest/examen-dvc/src/train.py
+    cmd: python3 src/train.py
     deps:
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/X_train_scaled.csv
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/y_train.csv
-      - /home/ubuntu/Data_scientest/examen-dvc/models/best_params.pkl
+      - data/processed_data/X_train_scaled.csv
+      - data/processed_data/y_train.csv
+      - models/best_params.pkl
     outs:
-      - /home/ubuntu/Data_scientest/examen-dvc/models/trained_model.pkl
+      - models/trained_model.pkl
 
   evaluate:
-    cmd: python3 /home/ubuntu/Data_scientest/examen-dvc/src/evaluation.py
+    cmd: python3 src/evaluation.py
     deps:
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/X_test_scaled.csv
-      - /home/ubuntu/Data_scientest/examen-dvc/data/processed_data/y_test.csv
-      - /home/ubuntu/Data_scientest/examen-dvc/models/trained_model.pkl
+      - data/processed_data/X_test_scaled.csv
+      - data/processed_data/y_test.csv
+      - models/trained_model.pkl
     outs:
-      - /home/ubuntu/Data_scientest/examen-dvc/src/data/prediction.csv
-      - /home/ubuntu/Data_scientest/examen-dvc/metrics/scores.json
+      - src/data/prediction.csv
+    metrics:
+      - metrics/scores.json:
+          type: json
+          cache: false
