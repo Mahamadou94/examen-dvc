@@ -13,12 +13,12 @@ stages:
       - data/processed_data/y_test.csv
 
   normalize:
-    cmd: python3 src/data/normalisation.py
+    cmd: python3 src/data/normalisation.py          
     deps:
       - data/processed_data/X_train.csv
       - data/processed_data/X_test.csv
     params:
-      - normalisation.scaler
+      - normalisation.scaler                        
     outs:
       - data/processed_data/X_train_scaled.csv
       - data/processed_data/X_test_scaled.csv
@@ -36,6 +36,15 @@ stages:
     outs:
       - models/best_params.pkl
 
+  train:                                      
+    cmd: python3 src/models/train.py
+    deps:
+      - data/processed_data/X_train_scaled.csv
+      - data/processed_data/y_train.csv
+      - models/best_params.pkl
+    outs:
+      - models/trained_model.pkl
+
   evaluate:
     cmd: python3 src/models/evaluation.py
     deps:
@@ -43,7 +52,7 @@ stages:
       - data/processed_data/y_test.csv
       - models/trained_model.pkl
     params:
-      - evaluate.metrics
+      - evaluate.metrics                        
     outs:
       - src/data/prediction.csv
     metrics:
