@@ -1,12 +1,16 @@
 schema: '2.0'
 stages:
   split:
-    cmd: python3 src/load_and_split_data.py
+    cmd: python3 src/data/load_and_split_data.py
     deps:
     - path: data/raw_data/raw.csv
       hash: md5
       md5: 617b56af2992376d5c3e91ad80823898
       size: 333757
+    params:
+      params.yaml:
+        split.random_state: 42
+        split.test_size: 0.2
     outs:
     - path: data/processed_data/X_test.csv
       hash: md5
@@ -35,6 +39,9 @@ stages:
       hash: md5
       md5: ef01f67c035349e375300528a99938f5
       size: 238533
+    params:
+      params.yaml:
+        normalisation.scaler: minmax
     outs:
     - path: data/processed_data/X_test_scaled.csv
       hash: md5
@@ -55,6 +62,24 @@ stages:
       hash: md5
       md5: a9cd9d91da89f732843d72548f64ded3
       size: 25951
+    params:
+      params.yaml:
+        grid_search.max_depth:
+        - 10
+        - 20
+        - 30
+        grid_search.min_samples_leaf:
+        - 1
+        - 2
+        - 4
+        grid_search.min_samples_split:
+        - 2
+        - 5
+        - 10
+        grid_search.n_estimators:
+        - 100
+        - 200
+        - 300
     outs:
     - path: models/best_params.pkl
       hash: md5
@@ -95,6 +120,11 @@ stages:
       hash: md5
       md5: 9d66e49743d1b0946e88b3630da7a993
       size: 25912033
+    params:
+      params.yaml:
+        evaluate.metrics:
+        - mse
+        - r2
     outs:
     - path: metrics/scores.json
       hash: md5

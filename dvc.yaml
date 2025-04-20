@@ -1,8 +1,11 @@
 stages:
   split:
-    cmd: python3 src/load_and_split_data.py
+    cmd: python3 src/data/load_and_split_data.py
     deps:
       - data/raw_data/raw.csv
+    params:
+      - split.test_size
+      - split.random_state
     outs:
       - data/processed_data/X_train.csv
       - data/processed_data/X_test.csv
@@ -14,6 +17,8 @@ stages:
     deps:
       - data/processed_data/X_train.csv
       - data/processed_data/X_test.csv
+    params:
+      - normalisation.scaler
     outs:
       - data/processed_data/X_train_scaled.csv
       - data/processed_data/X_test_scaled.csv
@@ -23,17 +28,13 @@ stages:
     deps:
       - data/processed_data/X_train_scaled.csv
       - data/processed_data/y_train.csv
+    params:
+      - grid_search.n_estimators
+      - grid_search.max_depth
+      - grid_search.min_samples_split
+      - grid_search.min_samples_leaf
     outs:
       - models/best_params.pkl
-
-  train:
-    cmd: python3 src/models/train.py
-    deps:
-      - data/processed_data/X_train_scaled.csv
-      - data/processed_data/y_train.csv
-      - models/best_params.pkl
-    outs:
-      - models/trained_model.pkl
 
   evaluate:
     cmd: python3 src/models/evaluation.py
@@ -41,6 +42,8 @@ stages:
       - data/processed_data/X_test_scaled.csv
       - data/processed_data/y_test.csv
       - models/trained_model.pkl
+    params:
+      - evaluate.metrics
     outs:
       - src/data/prediction.csv
     metrics:
